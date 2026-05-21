@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>فاتورة كاشير</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background: #eee; display: flex; justify-content: center; }
+        .receipt-paper { background: white; width: 300px; padding: 20px; margin-top: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.2); border: 1px dashed #333; }
+        h2 { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .item-row { display: flex; justify-content: space-between; margin: 5px 0; }
+        input { width: 90%; padding: 5px; margin: 5px 0; }
+        button { width: 100%; margin-top: 5px; cursor: pointer; }
+        .total-area { border-top: 2px solid #000; margin-top: 10px; padding-top: 10px; font-weight: bold; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+
+<div class="receipt-paper">
+    <h2>المتجر الرقمي</h2>
+    <input type="text" id="name" placeholder="اسم المنتج">
+    <input type="number" id="price" placeholder="السعر">
+    <input type="number" id="qty" placeholder="الكمية" value="1">
+    <button onclick="addItem()">إضافة للسلة</button>
+
+    <div id="receiptList">
+        <!-- هنا ستظهر المنتجات -->
+    </div>
+
+    <div class="total-area">
+        <div id="total">الإجمالي: 0 ريال</div>
+    </div>
+    <button onclick="checkout()" style="background: #000; color: #fff;">طباعة الفاتورة (إنهاء)</button>
+</div>
+
+<script>
+    let cart = [];
+    let total = 0;
+
+    function addItem() {
+        let name = document.getElementById("name").value;
+        let price = parseFloat(document.getElementById("price").value);
+        let qty = parseInt(document.getElementById("qty").value);
+
+        if (name && price) {
+            let subtotal = price * qty;
+            total += subtotal;
+            cart.push({name, price, qty, subtotal});
+            render();
+        }
+    }
+
+    function render() {
+        let list = document.getElementById("receiptList");
+        list.innerHTML = "";
+        cart.forEach((item, index) => {
+            list.innerHTML += `
+                <div class="item-row">
+                    <span>${item.qty}x ${item.name}</span>
+                    <span>${item.subtotal} ر.س</span>
+                    <button onclick="removeItem(${index})" style="width:auto">X</button>
+                </div>`;
+        });
+        document.getElementById("total").innerText = "الإجمالي: " + total + " ريال";
+    }
+
+    function removeItem(index) {
+        total -= cart[index].subtotal;
+        cart.splice(index, 1);
+        render();
+    }
+
+    function checkout() {
+        alert("تمت الطباعة بنجاح!\nالإجمالي النهائي: " + total + " ريال");
+        cart = [];
+        total = 0;
+        render();
+    }
+</script>
+</body>
+</html>
